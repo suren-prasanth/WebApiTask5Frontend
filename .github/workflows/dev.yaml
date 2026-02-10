@@ -41,6 +41,24 @@ jobs:
             echo "No changes in src or public"
           fi
 
+          if ! echo "$CHANGED_FILES" | grep -q "package.json$"; then
+            echo "Package version not modified."
+            exit 1
+          fi
+
+          OLD_VERSION=$(git show HEAD~1:package.json | jq -r '.version')
+          NEW_VERSION=$(jq -r '.version' package.json)
+
+          echo "Old version: $OLD_VERSION"
+          echo "New version: $NEW_VERSION"
+
+          if [ "$OLD_VERSION" = "$NEW_VERSION" ]; then
+            echo "package.json version was not bumped."
+            exit 1
+          fi
+
+          echo "package.json version bumped."
+
       - name: setup up node
         uses: actions/setup-node@v4
         with:
