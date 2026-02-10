@@ -57,8 +57,8 @@ jobs:
             exit 1
           fi
 
-          if [ "$OLD_VERSION" > "$NEW_VERSION" ]; then
-            echo "package.json version can't downgrade"
+          if dpkg --compare-versions "$NEW_VERSION" lt "$OLD_VERSION"; then
+            echo "package.json version can't be downgraded"
             exit 1
           fi
 
