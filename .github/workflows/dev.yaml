@@ -57,6 +57,11 @@ jobs:
             exit 1
           fi
 
+          if [ "$OLD_VERSION" > "$NEW_VERSION" ]; then
+            echo "package.json version can't downgrade"
+            exit 1
+          fi
+
           echo "package.json version bumped."
 
       - name: setup up node
