@@ -58,7 +58,7 @@ jobs:
           fi
 
           if [ "$OLD_VERSION" > "$NEW_VERSION" ]; then
-            echo "package.json version can't downgrade"
+            echo "package.json version can't downgraded"
             exit 1
           fi
 
