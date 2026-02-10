@@ -19,13 +19,53 @@ jobs:
         with:
           fetch-depth: 2
 
+      - name: checking file changes
+        id: version-check
+        run: |
+          echo "checking files"
+
+          CHANGED_FILES=$(git diff --name-only HEAD~1 HEAD)
+          echo "changed files"
+          echo "$CHANGED_FILES"
+          
+          if [ -z "$CHANGED_FILES" ]; then
+            echo "No changes detected."
+            exit 1
+          fi
+
+          CHANGED_IN_FOLDERS=$(git diff --name-only HEAD~1 HEAD -- src public)
+
+          if [ -n "$CHANGED_IN_FOLDERS" ]; then
+            echo "Changes in src or public"
+          else
+            echo "No changes in src or public"
+          fi
+
+          if ! echo "$CHANGED_FILES" | grep -q "package.json$"; then
+            echo "Package version not modified."
+            exit 1
+          fi
+
+          OLD_VERSION=$(git show HEAD~1:package.json | jq -r '.version')
+          NEW_VERSION=$(jq -r '.version' package.json)
+
+          echo "Old version: $OLD_VERSION"
+          echo "New version: $NEW_VERSION"
+
+          if [ "$OLD_VERSION" = "$NEW_VERSION" ]; then
+            echo "package.json version was not bumped."
+            exit 1
+          fi
+
+          echo "package.json version bumped."
+
       - name: setup up node
         uses: actions/setup-node@v4
         with:
-          node-version: '24.x' # Specify the Node.js version
+          node-version: '24.x' 
       
       - name: Install dependencies
-        run: npm ci # Use 'npm ci' for clean and consistent dependency installation
+        run: npm ci
       
       - name: Run Angular build
         run: npm run build -- --configuration production
