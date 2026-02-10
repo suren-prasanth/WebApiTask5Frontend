@@ -24,9 +24,22 @@ jobs:
         run: |
           echo "checking files"
 
-          CHANGEDFILES=$(git diff --name-only HEAD~1 HEAD)
+          CHANGED_FILES=$(git diff --name-only HEAD~1 HEAD)
           echo "changed files"
-          echo "$CHANGEDFILES" 
+          echo "$CHANGED_FILES"
+          
+          if [ -z "$CHANGED_FILES" ]; then
+            echo "No changes detected."
+            exit 1
+          fi
+
+          CHANGED_IN_FOLDERS=$(git diff --name-only HEAD~1 HEAD -- src public)
+
+          if [ -n "$CHANGED_IN_FOLDERS" ]; then
+            echo "Changes in src or public"
+          else
+            echo "No changes in src or public"
+          fi
 
       - name: setup up node
         uses: actions/setup-node@v4
