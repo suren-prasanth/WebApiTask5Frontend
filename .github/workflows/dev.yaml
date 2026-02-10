@@ -24,7 +24,7 @@ jobs:
         run: |
           echo "checking files"
 
-          CHANGEDFILES = $(git diff --name-only HEAD~1 HEAD)
+          CHANGEDFILES=$(git diff --name-only HEAD~1 HEAD)
           echo "changed files"
           echo "$CHANGEDFILES" 
 
